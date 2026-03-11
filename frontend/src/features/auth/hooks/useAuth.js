@@ -1,33 +1,50 @@
 import { useContext } from "react";
 import { AuthContext } from "../auth.context";
-import { Login,register,logout,getme } from "../services/auth.api";
+import { Login, register, logout, getme } from "../services/auth.api";
 
 export const useAuth = () => {
-  const context = useContext(AuthContext)
+  const context = useContext(AuthContext);
 
-  const {user,setUser,loading,setLoading} = context
+  const { user, setUser, loading, setLoading } = context;
 
-  const handleLogin = async ({email,password}) => {
-    setLoading(true)
-   const data = await Login({email,password})
+  const handleLogin = async ({ email, password }) => {
+    setLoading(true);
 
-   setUser(data.user)
-   setLoading(false)
-  }
+    try {
+      const data = await Login({ email, password });
+      setUser(data.user);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const handleRegister = async({username,email,password}) => {
-    setLoading(true)
-    const data = await register({username,email,password})
-    setUser(data.user)
-    setLoading(false)
-  }
+  const handleRegister = async ({ username, email, password }) => {
+    setLoading(true);
 
-  const handleLogout = async() => {
-    setLoading(true)
-    const data = await logout()
-    setUser(null)
-    setLoading(false)
-  }
+    try {
+      const data = await register({ username, email, password });
+      setUser(data.user);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  return {user, loading, handleRegister, handleLogin, handleLogout}
-}
+  const handleLogout = async () => {
+    setLoading(true);
+
+    try {
+      const data = await logout();
+      setUser(null);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { user, loading, handleRegister, handleLogin, handleLogout };
+};
